@@ -1,25 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import Logo from "./components/Logo";
+import Form from "./components/Form";
+import PackingList from "./components/PackingList";
+import Stats from "./components/Stats";
 
-function App() {
+const initialItems = [
+  { id: 1, description: "Passports", quantity: 2, packed: false },
+  { id: 2, description: "Socks", quantity: 12, packed: false },
+  { id: 3, description: "Charger", quantity: 1, packed: true },
+];
+
+const App = () => {
+  const [items, setItems] = useState([]);
+
+  const handleSubmit = (newItem) => {
+    setItems([...items, newItem]);
+  };
+  const handleDelete = (id) => {
+    setItems((items) => items.filter((item) => item.id !== id));
+  };
+  const handleToggle = (id) => {
+    setItems((items) =>
+      items.map((item) =>
+        item.id === id ? { ...item, packed: !item.packed } : item
+      )
+    );
+  };
+  const handleDeleteAll = () => {
+    const confirmed = window.confirm(
+      "Are you sure, you want to delete all items?"
+    );
+    confirmed && setItems([]);
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <Logo />
+      <Form onSubmit={handleSubmit} />
+      <PackingList
+        items={items}
+        onDelete={handleDelete}
+        onToggle={handleToggle}
+        onDeleteAll={handleDeleteAll}
+      />
+      <Stats items={items} />
     </div>
   );
-}
+};
 
 export default App;
